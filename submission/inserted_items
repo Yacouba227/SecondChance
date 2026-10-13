@@ -1,0 +1,6 @@
+$ cd secondChance-backend/util/import-mongo && node index.js
+Connected successfully to server
+Inserted documents: 16
+
+$ mongosh --eval "db.getSiblingDB(\"secondChance\").secondChanceItems.countDocuments()"
+16

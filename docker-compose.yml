@@ -1,0 +1,36 @@
+# Local run of the whole SecondChance stack: docker compose up --build
+services:
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secondchance
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: ./secondChance-backend
+    environment:
+      MONGO_URL: mongodb://root:secondchance@mongodb:27017
+      MONGO_DB: secondChance
+      MONGO_COLLECTION: secondChanceItems
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+    ports:
+      - "3060:3060"
+    depends_on:
+      - mongodb
+
+  sentiment:
+    build: ./sentiment
+    ports:
+      - "8000:3000"
+
+  frontend:
+    build:
+      context: ./secondChance-frontend
+      args:
+        REACT_APP_BACKEND_URL: http://localhost:3060
+    ports:
+      - "9000:8080"
+    depends_on:
+      - backend
